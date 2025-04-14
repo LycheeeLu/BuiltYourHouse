@@ -5,14 +5,20 @@
 #include <QWidget>
 #include <QGroupBox>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), currentMode(Normal)
 {
     ui->setupUi(this);
 
+
     setWindowTitle("Decorate your House!");
     resize(1000,800);
+
+    // Initialize undo stack
+    undoStack = new QUndoStack(this);
+
 
     //setup UI
     setupUI();
@@ -31,6 +37,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Add method to show undo view
+void MainWindow::showUndoView()
+{
+    if (!undoView) {
+        undoView = new QUndoView(undoStack);
+        undoView->setWindowTitle("Undo History");
+        undoView->setAttribute(Qt::WA_QuitOnClose, false);
+    }
+    undoView->show();
+}
 
 void MainWindow::setupUI(){
     // Create central widget and main layout
@@ -97,13 +113,15 @@ void MainWindow::createMenus(){
     //edit menus
     QMenu *editMenu = menuBar()->addMenu("&Edit");
 
-    QAction *undoAction = editMenu->addAction("&Undo");
-    undoAction->setShortcut(QKeySequence::Undo);
-    connect(undoAction, &QAction::triggered, this, &MainWindow::undo);
 
-    QAction *redoAction = editMenu->addAction("&Redo");
+    // Use QUndoStack's built-in undo/redo actions
+    QAction *undoAction = undoStack->createUndoAction(this, "&Undo");
+    undoAction->setShortcut(QKeySequence::Undo);
+    editMenu->addAction(undoAction);
+
+    QAction *redoAction = undoStack->createRedoAction(this, "&Redo");
     redoAction->setShortcut(QKeySequence::Redo);
-    connect(redoAction, &QAction::triggered, this, &MainWindow::redo);
+    editMenu->addAction(redoAction);
 
     editMenu->addSeparator();
 
@@ -125,9 +143,15 @@ void MainWindow::createMenus(){
     deleteAction->setShortcut(QKeySequence::Delete);
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteSelection);
 
-    QAction *selectAllAction = editMenu->addAction("Select All");
+    QAction *selectAllAction = editMenu->addAction("Select &All");
     selectAllAction->setShortcut(QKeySequence::SelectAll);
     connect(selectAllAction, &QAction::triggered, this, &MainWindow::selectAll);
+
+
+    // View menu
+    QMenu *viewMenu = menuBar()->addMenu("&View");
+    QAction *showUndoViewAction = viewMenu->addAction("Show &Undo History");
+    connect(showUndoViewAction, &QAction::triggered, this, &MainWindow::showUndoView);
 
     // Create toolbar
     QToolBar *toolBar = addToolBar("Main Toolbar");
@@ -138,6 +162,9 @@ void MainWindow::createMenus(){
     toolBar->addAction(copyAction);
     toolBar->addAction(pasteAction);
     toolBar->addAction(deleteAction);
+    toolBar->addAction(selectAllAction);
+    toolBar->addSeparator();
+    toolBar->addAction(showUndoViewAction);
 
 
 }
@@ -237,7 +264,7 @@ void MainWindow::handleMousePress(QGraphicsSceneMouseEvent *event)
             else {
                 // Create and execute add command
                 AddCommand *command = new AddCommand(scene, furniture);
-                executeCommand(command);
+                undoStack->push(command);
 
                 statusBar()->showMessage("Furniture added");
                 currentMode = Normal;
@@ -284,7 +311,7 @@ void MainWindow::handleMouseRelease(QGraphicsSceneMouseEvent *event)
 
             // Create and execute add command
             AddCommand *command = new AddCommand(scene, wall);
-            executeCommand(command);
+            undoStack->push(command);
 
             statusBar()->showMessage("Wall added");
         }
@@ -293,17 +320,6 @@ void MainWindow::handleMouseRelease(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void MainWindow::executeCommand(Command *command)
-{
-    command->execute();
-    undoStack.push(command);
-
-    // Clear redo stack
-    qDeleteAll(redoStack);
-    redoStack.clear();
-
-
-}
 
 QList<QGraphicsItem *> MainWindow::getSelectedItems()
 {
@@ -317,29 +333,6 @@ QList<QGraphicsItem *> MainWindow::getSelectedItems()
 
 }
 
-void MainWindow::undo()
-{
-    if (!undoStack.isEmpty()) {
-        Command *command = undoStack.pop();
-        command->undo();
-        redoStack.push(command);
-        statusBar()->showMessage("Undo");
-    } else {
-        statusBar()->showMessage("Nothing to undo");
-    }
-}
-
-void MainWindow::redo()
-{
-    if (!redoStack.isEmpty()) {
-        Command *command = redoStack.pop();
-        command->execute();
-        undoStack.push(command);
-        statusBar()->showMessage("Redo");
-    } else {
-        statusBar()->showMessage("Nothing to redo");
-    }
-}
 
 void MainWindow::cutSelection()
 {
@@ -382,7 +375,10 @@ void MainWindow::pasteSelection()
     foreach (QGraphicsItem *item, clipboardItems) {
         if (Furniture *furniture = dynamic_cast<Furniture*>(item)) {
             Furniture *copy = new Furniture(*furniture); // Use copy constructor
-            copy->moveBy(20, 20); // Offset by small amount
+            copy->moveBy(20, 20);
+
+
+            // Offset by small amount
             scene->addItem(copy);
             copy->setSelected(true);
             newItems.append(copy);
@@ -415,7 +411,7 @@ void MainWindow::pasteSelection()
     if (!newItems.isEmpty()) {
         // Create add command for all new items
         AddCommand *command = new AddCommand(scene, newItems);
-        executeCommand(command);
+        undoStack->push(command);
         statusBar()->showMessage(QString("%1 item(s) pasted").arg(newItems.size()));
     } else {
         statusBar()->showMessage("Could not paste items due to collisions");
@@ -432,7 +428,7 @@ void MainWindow::deleteSelection()
     }
 
     DeleteCommand *command = new DeleteCommand(scene, items);
-    executeCommand(command);
+    undoStack->push(command);
 
     statusBar()->showMessage(QString("%1 item(s) deleted").arg(items.size()));
 }

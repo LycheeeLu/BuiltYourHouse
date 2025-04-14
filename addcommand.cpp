@@ -1,16 +1,16 @@
 #include "addcommand.h"
 
-
-AddCommand::AddCommand(QGraphicsScene *scene, QGraphicsItem *item)
-    : scene(scene), itemsAdded(false)
+AddCommand::AddCommand(QGraphicsScene *s, QGraphicsItem *item, QUndoCommand *parent)
+    : QUndoCommand(parent), scene(s), itemsAdded(false)
 {
-     items.append(item);
+    items.append(item);
+    setText("Add Item");
 }
 
-AddCommand::AddCommand(QGraphicsScene *scene, const QList<QGraphicsItem *> &itemList)
-    :  scene(scene), items(itemList), itemsAdded(false)
+AddCommand::AddCommand(QGraphicsScene *s, const QList<QGraphicsItem*> &itemList, QUndoCommand *parent)
+    : QUndoCommand(parent), scene(s), items(itemList), itemsAdded(false)
 {
-
+    setText(QString("Add %1 Items").arg(items.size()));
 }
 
 AddCommand::~AddCommand()
@@ -19,16 +19,14 @@ AddCommand::~AddCommand()
         // Clean up items if they were never added to the scene
         qDeleteAll(items);
     }
-
 }
 
-void AddCommand::execute()
+void AddCommand::redo()
 {
     foreach (QGraphicsItem *item, items) {
         scene->addItem(item);
     }
     itemsAdded = true;
-
 }
 
 void AddCommand::undo()
@@ -37,5 +35,4 @@ void AddCommand::undo()
         scene->removeItem(item);
     }
     itemsAdded = false;
-
 }

@@ -6,7 +6,7 @@ Wall::Wall(const QPointF &startPoint, const QPointF &endPoint)
 {
 
     // checkcing if the wall should be vertical or horizontal
-    qreal dx = qAbs(endPoint.x() - startPoint.x());
+    /*qreal dx = qAbs(endPoint.x() - startPoint.x());
     qreal dy = qAbs(endPoint.y() - startPoint.y());
 
     if (dx > dy) {
@@ -18,7 +18,7 @@ Wall::Wall(const QPointF &startPoint, const QPointF &endPoint)
         start = startPoint;
         end = QPointF(startPoint.x(), endPoint.y());
     }
-    // Walls can't be selected
+    // Walls can't be selected*/
     setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 

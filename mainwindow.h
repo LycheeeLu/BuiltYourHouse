@@ -13,6 +13,8 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <QFileDialog>
+#include <QUndoStack>
+#include <QUndoView>
 
 
 #include "housescene.h"
@@ -70,10 +72,9 @@ private:
     // Clipboard for copy-paste
     QList<QGraphicsItem*> clipboardItems;
 
-    // Command stacks for undo-redo
-    QStack<Command*> undoStack;
-    QStack<Command*> redoStack;
-
+    // Undo framework
+    QUndoStack *undoStack;
+    QUndoView *undoView;
 
     void setupUI();
     void createMenus();
@@ -108,8 +109,7 @@ private slots:
     void deleteSelection();
     void selectAll();
 
-    void undo();
-    void redo();
+    void showUndoView();
 
 
 };

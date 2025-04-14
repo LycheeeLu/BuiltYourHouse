@@ -1,21 +1,20 @@
-
 #ifndef DELETECOMMAND_H
 #define DELETECOMMAND_H
 
-#include "command.h"
+#include <QUndoCommand>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 
 // Command for deleting items from the scene
-class DeleteCommand : public Command
+class DeleteCommand : public QUndoCommand
 {
 public:
-    DeleteCommand(QGraphicsScene *scene, QGraphicsItem *item);
-    DeleteCommand(QGraphicsScene *scene, const QList<QGraphicsItem*> &items);
+    DeleteCommand(QGraphicsScene *scene, QGraphicsItem *item, QUndoCommand *parent = nullptr);
+    DeleteCommand(QGraphicsScene *scene, const QList<QGraphicsItem*> &items, QUndoCommand *parent = nullptr);
     ~DeleteCommand();
 
-    void execute() override;
     void undo() override;
+    void redo() override;
 
 private:
     QGraphicsScene *scene;
@@ -24,4 +23,4 @@ private:
     bool itemsRemoved;
 };
 
-#endif // DELETECOMMAND_H
+#endif

@@ -1,21 +1,20 @@
-
 #ifndef ADDCOMMAND_H
 #define ADDCOMMAND_H
 
-#include "command.h"
+#include <QUndoCommand>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 
 // Command for adding items to the scene
-class AddCommand : public Command
+class AddCommand : public QUndoCommand
 {
 public:
-    AddCommand(QGraphicsScene *scene, QGraphicsItem *item);
-    AddCommand(QGraphicsScene *scene, const QList<QGraphicsItem*> &itemList);
+    AddCommand(QGraphicsScene *scene, QGraphicsItem *item, QUndoCommand *parent = nullptr);
+    AddCommand(QGraphicsScene *scene, const QList<QGraphicsItem*> &items, QUndoCommand *parent = nullptr);
     ~AddCommand();
 
-    void execute() override;
     void undo() override;
+    void redo() override;
 
 private:
     QGraphicsScene *scene;
@@ -23,4 +22,4 @@ private:
     bool itemsAdded;
 };
 
-#endif // ADDCOMMAND_H
+#endif

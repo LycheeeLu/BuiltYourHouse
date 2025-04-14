@@ -1,20 +1,21 @@
 #include "deletecommand.h"
 
-
-DeleteCommand::DeleteCommand(QGraphicsScene *scene, QGraphicsItem *item)
-    : scene(scene), itemsRemoved(false)
+DeleteCommand::DeleteCommand(QGraphicsScene *s, QGraphicsItem *item, QUndoCommand *parent)
+    : QUndoCommand(parent), scene(s), itemsRemoved(false)
 {
     items.append(item);
     positions.append(item->pos());
+    setText("Delete Item");
 }
 
-DeleteCommand::DeleteCommand(QGraphicsScene *scene, const QList<QGraphicsItem *> &itemList)
-    : scene(scene), itemsRemoved(false)
+DeleteCommand::DeleteCommand(QGraphicsScene *s, const QList<QGraphicsItem*> &itemList, QUndoCommand *parent)
+    : QUndoCommand(parent), scene(s), itemsRemoved(false)
 {
     foreach (QGraphicsItem *item, itemList) {
         items.append(item);
         positions.append(item->pos());
     }
+    setText(QString("Delete %1 Items").arg(items.size()));
 }
 
 DeleteCommand::~DeleteCommand()
@@ -25,13 +26,12 @@ DeleteCommand::~DeleteCommand()
     }
 }
 
-void DeleteCommand::execute()
+void DeleteCommand::redo()
 {
     foreach (QGraphicsItem *item, items) {
         scene->removeItem(item);
     }
     itemsRemoved = true;
-
 }
 
 void DeleteCommand::undo()
@@ -41,5 +41,4 @@ void DeleteCommand::undo()
         scene->addItem(items[i]);
     }
     itemsRemoved = false;
-
 }

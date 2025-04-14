@@ -1,5 +1,7 @@
 #include "furniture.h"
 #include <QBrush>
+#include <QUndoStack>
+#include "movecommand.h"
 
 Furniture::Furniture(int w, int h, FurnitureType type)
     : width(w), height(h), furnitureType(type)
@@ -168,7 +170,15 @@ void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     // If position changed and no collision, this is a successful move
     if (pos() != originalPos && !collidesWithFurnitureOrWalls()) {
-        // Movement handling is done in mainwindow through commands
+        // Create a move command and add it to the undo stack
+        QUndoStack *undoStack = dynamic_cast<QUndoStack*>(scene()->parent()->findChild<QUndoStack*>());
+        if (undoStack) {
+            MoveCommand *command = new MoveCommand(this, originalPos, pos());
+            undoStack->push(command);
+        }
+    } else if (collidesWithFurnitureOrWalls()) {
+        // Move back to original position if there's a collision
+        setPos(originalPos);
     }
 }
 
