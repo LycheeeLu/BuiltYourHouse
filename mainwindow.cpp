@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     //setup UI
     setupUI();
+    createMenus();
+
+    //set up a default medium house
+    setMediumHouse();
 
 }
 
@@ -36,9 +40,6 @@ void MainWindow::setupUI(){
     scene -> setHouseSize(HouseScene::Medium);
     view-> setScene (scene);
 
-    layout->addWidget(view);
-    setCentralWidget(central);
-
 
     // Create house size buttons
     QGroupBox *houseGroup = new QGroupBox("House Size");
@@ -56,6 +57,26 @@ void MainWindow::setupUI(){
     connect(smallHouseBtn, &QPushButton::clicked, this, &MainWindow::setSmallHouse);
     connect(mediumHouseBtn, &QPushButton::clicked, this, &MainWindow::setMediumHouse);
     connect(largeHouseBtn, &QPushButton::clicked, this, &MainWindow::setLargeHouse);
+
+    // Add widgets to main layout
+    layout->addWidget(houseGroup);
+
+
+    layout->addWidget(view);
+    // Set central widget
+    setCentralWidget(central);
+
+}
+
+void MainWindow::createMenus(){
+    // add file menu
+    QMenu *fileMenu = menuBar()->addMenu("&File");
+
+    //add Edit menu
+    QMenu *editMenu = menuBar()->addMenu("&Edit");
+
+    // Create toolbar
+    QToolBar *toolBar = addToolBar("Main Toolbar");
 
 
 }

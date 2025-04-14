@@ -2,6 +2,7 @@
 #define HOUSESCENE_H
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsRectItem>
 class HouseScene : public QGraphicsScene
 {
     Q_OBJECT
