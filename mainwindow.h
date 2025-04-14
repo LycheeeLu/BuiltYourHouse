@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include <QGraphicsView>
-
+#include <QPushButton>
 #include <QMainWindow>
+#include "housescene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,5 +28,22 @@ private:
     HouseScene *scene;
 
     Ui::MainWindow *ui;
+    // House creation buttons
+    QPushButton *smallHouseBtn;
+    QPushButton *mediumHouseBtn;
+    QPushButton *largeHouseBtn;
+
+
+
+    void setupUI();
+    void createMenus();
+
+
+
+private slots:
+    void setSmallHouse();
+    void setMediumHouse();
+    void setLargeHouse();
+
 };
 #endif // MAINWINDOW_H
