@@ -93,14 +93,51 @@ void MainWindow::setupUI(){
 }
 
 void MainWindow::createMenus(){
-    // add file menu
-    QMenu *fileMenu = menuBar()->addMenu("&File");
 
-    //add Edit menu
+    //edit menus
     QMenu *editMenu = menuBar()->addMenu("&Edit");
+
+    QAction *undoAction = editMenu->addAction("&Undo");
+    undoAction->setShortcut(QKeySequence::Undo);
+    connect(undoAction, &QAction::triggered, this, &MainWindow::undo);
+
+    QAction *redoAction = editMenu->addAction("&Redo");
+    redoAction->setShortcut(QKeySequence::Redo);
+    connect(redoAction, &QAction::triggered, this, &MainWindow::redo);
+
+    editMenu->addSeparator();
+
+    QAction *cutAction = editMenu->addAction("Cu&t");
+    cutAction->setShortcut(QKeySequence::Cut);
+    connect(cutAction, &QAction::triggered, this, &MainWindow::cutSelection);
+
+    QAction *copyAction = editMenu->addAction("&Copy");
+    copyAction->setShortcut(QKeySequence::Copy);
+    connect(copyAction, &QAction::triggered, this, &MainWindow::copySelection);
+
+    QAction *pasteAction = editMenu->addAction("&Paste");
+    pasteAction->setShortcut(QKeySequence::Paste);
+    connect(pasteAction, &QAction::triggered, this, &MainWindow::pasteSelection);
+
+    editMenu->addSeparator();
+
+    QAction *deleteAction = editMenu->addAction("&Delete");
+    deleteAction->setShortcut(QKeySequence::Delete);
+    connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteSelection);
+
+    QAction *selectAllAction = editMenu->addAction("Select All");
+    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    connect(selectAllAction, &QAction::triggered, this, &MainWindow::selectAll);
 
     // Create toolbar
     QToolBar *toolBar = addToolBar("Main Toolbar");
+    toolBar->addAction(undoAction);
+    toolBar->addAction(redoAction);
+    toolBar->addSeparator();
+    toolBar->addAction(cutAction);
+    toolBar->addAction(copyAction);
+    toolBar->addAction(pasteAction);
+    toolBar->addAction(deleteAction);
 
 
 }
@@ -279,3 +316,136 @@ QList<QGraphicsItem *> MainWindow::getSelectedItems()
     return items;
 
 }
+
+void MainWindow::undo()
+{
+    if (!undoStack.isEmpty()) {
+        Command *command = undoStack.pop();
+        command->undo();
+        redoStack.push(command);
+        statusBar()->showMessage("Undo");
+    } else {
+        statusBar()->showMessage("Nothing to undo");
+    }
+}
+
+void MainWindow::redo()
+{
+    if (!redoStack.isEmpty()) {
+        Command *command = redoStack.pop();
+        command->execute();
+        undoStack.push(command);
+        statusBar()->showMessage("Redo");
+    } else {
+        statusBar()->showMessage("Nothing to redo");
+    }
+}
+
+void MainWindow::cutSelection()
+{
+    copySelection();
+    deleteSelection();
+}
+
+void MainWindow::copySelection()
+{
+    clipboardItems.clear();
+
+    foreach (QGraphicsItem *item, getSelectedItems()) {
+        if (Furniture *furniture = dynamic_cast<Furniture*>(item)) {
+            clipboardItems.append(furniture);
+        }
+    }
+
+    if (!clipboardItems.isEmpty()) {
+        statusBar()->showMessage(QString("%1 item(s) copied").arg(clipboardItems.size()));
+    } else {
+        statusBar()->showMessage("No furniture selected to copy");
+    }
+}
+
+void MainWindow::pasteSelection()
+{
+    if (clipboardItems.isEmpty()) {
+        statusBar()->showMessage("Nothing to paste");
+        return;
+    }
+
+    // Deselect all items
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        item->setSelected(false);
+    }
+
+    QList<QGraphicsItem*> newItems;
+
+    // Create copies of clipboard items with slight offset
+    foreach (QGraphicsItem *item, clipboardItems) {
+        if (Furniture *furniture = dynamic_cast<Furniture*>(item)) {
+            Furniture *copy = new Furniture(*furniture); // Use copy constructor
+            copy->moveBy(20, 20); // Offset by small amount
+            scene->addItem(copy);
+            copy->setSelected(true);
+            newItems.append(copy);
+
+            // Check for collisions
+            if (copy->collidesWithFurnitureOrWalls()) {
+                // Try different positions
+                bool foundPosition = false;
+                for (int offsetX = 30; offsetX <= 100; offsetX += 20) {
+                    for (int offsetY = 30; offsetY <= 100; offsetY += 20) {
+                        copy->setPos(furniture->pos() + QPointF(offsetX, offsetY));
+                        if (!copy->collidesWithFurnitureOrWalls()) {
+                            foundPosition = true;
+                            break;
+                        }
+                    }
+                    if (foundPosition) break;
+                }
+
+                // If still colliding, remove it
+                if (!foundPosition) {
+                    scene->removeItem(copy);
+                    delete copy;
+                    newItems.removeLast();
+                }
+            }
+        }
+    }
+
+    if (!newItems.isEmpty()) {
+        // Create add command for all new items
+        AddCommand *command = new AddCommand(scene, newItems);
+        executeCommand(command);
+        statusBar()->showMessage(QString("%1 item(s) pasted").arg(newItems.size()));
+    } else {
+        statusBar()->showMessage("Could not paste items due to collisions");
+    }
+}
+
+void MainWindow::deleteSelection()
+{
+    QList<QGraphicsItem*> items = getSelectedItems();
+
+    if (items.isEmpty()) {
+        statusBar()->showMessage("No furniture selected to delete");
+        return;
+    }
+
+    DeleteCommand *command = new DeleteCommand(scene, items);
+    executeCommand(command);
+
+    statusBar()->showMessage(QString("%1 item(s) deleted").arg(items.size()));
+}
+
+void MainWindow::selectAll()
+{
+    // Select all furniture items
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (dynamic_cast<Furniture*>(item)) {
+            item->setSelected(true);
+        }
+    }
+
+    statusBar()->showMessage("All furniture selected");
+}
+

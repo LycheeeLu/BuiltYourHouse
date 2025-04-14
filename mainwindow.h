@@ -19,7 +19,7 @@
 #include "wall.h"
 #include "furniture.h"
 
-
+#include "command.h"
 #include "movecommand.h"
 #include "addcommand.h"
 #include "deletecommand.h"
@@ -84,6 +84,7 @@ private:
     void handleMouseMove(QGraphicsSceneMouseEvent *event);
     void handleMouseRelease(QGraphicsSceneMouseEvent *event);
 
+
     // Helper methods
     void executeCommand(Command* command);
     QList<QGraphicsItem*> getSelectedItems();
@@ -100,6 +101,15 @@ private slots:
     void addTable();
     void startDrawingWall();
 
+
+    void cutSelection();
+    void copySelection();
+    void pasteSelection();
+    void deleteSelection();
+    void selectAll();
+
+    void undo();
+    void redo();
 
 
 };
