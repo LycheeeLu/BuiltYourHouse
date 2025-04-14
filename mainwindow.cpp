@@ -112,6 +112,24 @@ void MainWindow::setupUI(){
 
 void MainWindow::createMenus(){
 
+    // File menu
+    QMenu *fileMenu = menuBar()->addMenu("&File");
+
+    QAction *saveAction = fileMenu->addAction("&Save");
+    saveAction->setShortcut(QKeySequence::Save);
+    connect(saveAction, &QAction::triggered, this, &MainWindow::saveProject);
+
+    QAction *loadAction = fileMenu->addAction("&Load");
+    loadAction->setShortcut(QKeySequence::Open);
+    connect(loadAction, &QAction::triggered, this, &MainWindow::loadProject);
+
+    fileMenu->addSeparator();
+
+    QAction *exitAction = fileMenu->addAction("E&xit");
+    exitAction->setShortcut(QKeySequence::Quit);
+    connect(exitAction, &QAction::triggered, this, &QWidget::close);
+
+
     //edit menus
     QMenu *editMenu = menuBar()->addMenu("&Edit");
 
@@ -160,6 +178,9 @@ void MainWindow::createMenus(){
 
     // Create toolbar
     QToolBar *toolBar = addToolBar("Main Toolbar");
+    toolBar->addAction(saveAction);
+    toolBar->addAction(loadAction);
+    toolBar->addSeparator();
     toolBar->addAction(undoAction);
     toolBar->addAction(redoAction);
     toolBar->addSeparator();
@@ -172,6 +193,7 @@ void MainWindow::createMenus(){
     toolBar->addAction(selectAction);
     toolBar->addSeparator();
     toolBar->addAction(showUndoViewAction);
+
 
 
 }
@@ -468,6 +490,163 @@ void MainWindow::select()
     } else {
         statusBar()->showMessage(QString("%1 furniture item(s) selected").arg(selectedFurniture.count()));
 
+    }
+
+}
+
+
+void MainWindow::saveProject()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save House Layout",
+                                                    QString(), "House Layout Files (*.hlf)");
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::warning(this, "Save Error", "Could not save to file: " + file.errorString());
+        return;
+    }
+
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_5_14);
+
+
+    for (QGraphicsItem *item : scene->items()) {
+        qDebug() << "Item:" << item << "Type:" << item->type();
+    }
+
+
+    // Write scene dimensions
+    out << scene->sceneRect();
+    qDebug() << "saving scene" << scene->sceneRect();
+
+    // Write number of walls
+    QList<Wall*> walls;
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (Wall *wall = dynamic_cast<Wall*>(item)) {
+            walls.append(wall);
+        }
+    }
+    out << static_cast<int>(walls.size());
+    qDebug() << "Writing wall count:" << walls.size();
+
+    // Write each wall
+    foreach (Wall *wall, walls) {
+        out << wall->startPoint() << wall->endPoint();
+        qDebug() << "Saving wall start" << wall->startPoint() << "end " << wall-> endPoint();
+    }
+
+    // write each furniture
+    QList<Furniture*> furniture;
+    for (QGraphicsItem *item : scene->items()) {
+        if (Furniture *f = dynamic_cast<Furniture*>(item)) {
+            furniture.append(f);
+        }
+    }
+    out << furniture.size();
+
+    for (Furniture *f : furniture) {
+        out << static_cast<int>(f->getType()) << f->pos() << f->rotation() << f->width << f->height;
+        qDebug() << "Saving Furniture: type=" << f->getType()
+                 << " pos=" << f->pos() << " rotation=" << f->rotation()
+                 << " dimensions=" << f->width << "x" << f->height;
+    }
+
+
+
+    statusBar()->showMessage("Project saved to " + fileName);
+
+    qDebug() << "Saving " << walls.size() << " walls and " << furniture.size() << " furniture items";
+    for (const Furniture* f : furniture) {
+        qDebug() << " Saving Furniture: type=" << f->getType() << " pos=" << f->pos()
+        << " rotation=" << f->rotation() << " dimensions=" << f->width << "x" << f->height;
+    }
+}
+
+void MainWindow::loadProject()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Load House Layout",
+                                                    QString(), "House Layout Files (*.hlf)");
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, "Load Error", "Could not load file: " + file.errorString());
+        return;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_5_14);
+
+    // Clear current scene
+    scene->clear();
+    qDebug() << "After clear, scene has" << scene->items().count() << "items";
+
+    // Reset command stacks
+    undoStack->clear();
+
+
+
+    // Read scene dimensions
+    QRectF sceneRect;
+    in >> sceneRect;
+
+    // Determine house size based on sceneRect and rebuild house framework
+    if (sceneRect.width() == 300 && sceneRect.height() == 300) {
+        scene->setHouseSize(HouseScene::Small);
+    } else if (sceneRect.width() == 600 && sceneRect.height() == 600) {
+        scene->setHouseSize(HouseScene::Medium);
+    } else if (sceneRect.width() == 800 && sceneRect.height() == 600) {
+        scene->setHouseSize(HouseScene::Large);
+    } else {
+        // Default to medium if dimensions don't match known sizes
+        scene->setHouseSize(HouseScene::Medium);
+    }
+
+    qDebug() << "scene rect:" << sceneRect << "x:" << sceneRect.x() << "y:" << sceneRect.y()
+             << "width:" << sceneRect.width() << "height:" << sceneRect.height();
+
+    qDebug() << "File position before reading wallCount:" << file.pos();
+
+    // Read walls
+    int wallCount;
+    in >> wallCount;
+    qDebug() << "Read wall count:" << wallCount;
+    qDebug() << "File position after reading wallCount:" << file.pos();
+    for (int i = 0; i < wallCount; ++i) {
+        QPointF start, end;
+        in >> start >> end;
+        Wall *wall = new Wall(start, end);
+        scene->addItem(wall);
+        qDebug() << "Loaded wall start" << start << "end" << end;
+    }
+
+
+    // Read furniture
+    int furnitureCount;
+    in >> furnitureCount;
+    qDebug() << "Read furniture count:" << furnitureCount;
+    for (int i = 0; i < furnitureCount; ++i) {
+        int type;
+        QPointF pos;
+        qreal rotation;
+        qreal width, height;
+        in >> type >> pos >> rotation >> width >> height;
+
+        Furniture *furniture = new Furniture(width, height, (Furniture::FurnitureType)type);
+        furniture->setPos(pos);
+        furniture->setRotation(rotation);
+        scene->addItem(furniture);
+        qDebug() << " loading Furniture: type=" << type << " pos=" << pos
+                 << " rotation=" << rotation << " dimensions=" << width << "x" << height;
+    }
+
+    statusBar()->showMessage("Project loaded from " + fileName);
+
+    for (QGraphicsItem *item : scene->items()) {
+        qDebug() << "Item:" << item << "Type:" << item->type();
     }
 
 }

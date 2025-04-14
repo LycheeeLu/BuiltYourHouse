@@ -79,6 +79,7 @@ private:
     void setupUI();
     void createMenus();
 
+
     // Event handlers for scene
     bool eventFilter(QObject *obj, QEvent *event) override;
     void handleMousePress(QGraphicsSceneMouseEvent *event);
@@ -114,6 +115,9 @@ private slots:
     void select();
 
     void showUndoView();
+
+    void saveProject();
+    void loadProject();
 
 
 

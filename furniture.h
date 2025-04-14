@@ -32,6 +32,8 @@ public:
   bool tryRotate(qreal angle);
 
   FurnitureType getType() const;
+  int width;
+  int height;
 
 
 protected:
@@ -41,8 +43,7 @@ protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
-  int width;
-  int height;
+
   QPointF dragStartPosition;
   QPointF originalPos;
   FurnitureType furnitureType;
