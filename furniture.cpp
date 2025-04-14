@@ -2,6 +2,7 @@
 #include <QBrush>
 #include <QUndoStack>
 #include "movecommand.h"
+#include <QDateTime>
 
 Furniture::Furniture(int w, int h, FurnitureType type)
     : width(w), height(h), furnitureType(type)
@@ -79,21 +80,6 @@ void Furniture::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         painter -> drawEllipse (rect);
     }
 
-    // Draw label in the middle of the furniture icon
-    /*QString label;
-    switch (furnitureType) {
-    case Sofa:
-        label = "Sofa";
-        break;
-    case Chair:
-        label = "Chair";
-        break;
-    case Table:
-        label = "Table";
-        break;
-    }
-    painter->drawText(rect, Qt::AlignCenter, label);*/
-
 }
 
 bool Furniture::collidesWithFurnitureOrWalls()
@@ -163,8 +149,8 @@ void Furniture::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 
 }
-
-void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+//this only works for one item
+/* void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
 
@@ -179,6 +165,68 @@ void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     } else if (collidesWithFurnitureOrWalls()) {
         // Move back to original position if there's a collision
         setPos(originalPos);
+    }
+} */
+
+void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+
+    // If position hasn't changed or we have a collision, revert the move
+    if (pos() == originalPos || collidesWithFurnitureOrWalls()) {
+        setPos(originalPos);
+        return;
+    }
+
+    QUndoStack *undoStack = dynamic_cast<QUndoStack*>(scene()->parent()->findChild<QUndoStack*>());
+    if (!undoStack) return;
+
+    // Check if this is part of a multi-selection
+    QList<QGraphicsItem*> selectedItems = scene()->selectedItems();
+
+    // If this is the only selected item, create a command just for it
+    if (selectedItems.size() <= 1) {
+        MoveCommand *command = new MoveCommand(this, originalPos, pos());
+        undoStack->push(command);
+        return;
+    }
+
+    // For multi-selection, we need to handle this differently
+    // We'll use a static variable to track when we've already processed a group
+    static QGraphicsScene* lastProcessedScene = nullptr;
+    static qint64 lastProcessedTime = 0;
+
+    // Get current time in milliseconds
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+
+    // If we've just processed items from this scene (within 100ms), don't create another command
+    if (lastProcessedScene == scene() && (currentTime - lastProcessedTime) < 100) {
+        return;
+    }
+
+    // Create lists for the move command
+    QList<QGraphicsItem*> items;
+    QList<QPointF> oldPositions;
+    QList<QPointF> newPositions;
+
+    // For each selected item
+    foreach (QGraphicsItem* item, selectedItems) {
+        Furniture* furniture = dynamic_cast<Furniture*>(item);
+        if (furniture) {
+            items.append(furniture);
+            oldPositions.append(furniture->originalPos);
+            newPositions.append(furniture->pos());
+        }
+    }
+
+    // Create a single command for all items
+    if (!items.isEmpty()) {
+        MoveCommand *groupCommand = new MoveCommand(items, oldPositions, newPositions);
+        undoStack->push(groupCommand);
+
+        // Remember that we've processed this scene
+        lastProcessedScene = scene();
+        lastProcessedTime = currentTime;
     }
 }
 

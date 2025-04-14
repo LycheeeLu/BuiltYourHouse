@@ -85,9 +85,9 @@ void MainWindow::setupUI(){
     //Create add furniture buttons and adding the group to layout
     QGroupBox *furnitureGroup = new QGroupBox("Add Furniture");
     QHBoxLayout *furnitureLayout = new QHBoxLayout(furnitureGroup);
-    sofaBtn = new QPushButton("Sofa (60x20)");
-    chairBtn = new QPushButton("Chair (30x30)");
-    tableBtn = new QPushButton("Table (30x30)");
+    sofaBtn = new QPushButton("Sofa");
+    chairBtn = new QPushButton("Chair");
+    tableBtn = new QPushButton("Table");
     wallBtn = new QPushButton("Draw Wall");
     furnitureLayout->addWidget(sofaBtn);
     furnitureLayout->addWidget(chairBtn);
@@ -147,6 +147,9 @@ void MainWindow::createMenus(){
     selectAllAction->setShortcut(QKeySequence::SelectAll);
     connect(selectAllAction, &QAction::triggered, this, &MainWindow::selectAll);
 
+    QAction *selectAction = editMenu->addAction("&Select");
+    connect(selectAction, &QAction::triggered, this, &MainWindow::select);
+
 
     // View menu
     QMenu *viewMenu = menuBar()->addMenu("&View");
@@ -162,7 +165,9 @@ void MainWindow::createMenus(){
     toolBar->addAction(copyAction);
     toolBar->addAction(pasteAction);
     toolBar->addAction(deleteAction);
+    toolBar->addSeparator();
     toolBar->addAction(selectAllAction);
+    toolBar->addAction(selectAction);
     toolBar->addSeparator();
     toolBar->addAction(showUndoViewAction);
 
@@ -443,5 +448,25 @@ void MainWindow::selectAll()
     }
 
     statusBar()->showMessage("All furniture selected");
+}
+
+void MainWindow::select()
+{
+    //Select a few furniture items
+    QList<QGraphicsItem*> selectedFurniture;
+
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        if (Furniture *furniture = dynamic_cast<Furniture*>(item)) {
+            selectedFurniture.append(furniture);
+        }
+    }
+
+    if (selectedFurniture.isEmpty()) {
+        statusBar()->showMessage("No furniture selected");
+    } else {
+        statusBar()->showMessage(QString("%1 furniture item(s) selected").arg(selectedFurniture.count()));
+
+    }
+
 }
 

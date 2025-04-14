@@ -108,6 +108,7 @@ private slots:
     void pasteSelection();
     void deleteSelection();
     void selectAll();
+    void select();
 
     void showUndoView();
 
