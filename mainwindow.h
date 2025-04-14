@@ -4,7 +4,25 @@
 #include <QGraphicsView>
 #include <QPushButton>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QStack>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsScene>
+#include <QMenu>
+#include <QAction>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QFileDialog>
+
+
 #include "housescene.h"
+#include "wall.h"
+#include "furniture.h"
+
+
+#include "movecommand.h"
+#include "addcommand.h"
+#include "deletecommand.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -34,16 +52,55 @@ private:
     QPushButton *largeHouseBtn;
 
 
+    // Furniture buttons
+    QPushButton *sofaBtn;
+    QPushButton *chairBtn;
+    QPushButton *tableBtn;
+    QPushButton *wallBtn;
+
+    // Wall drawing
+    QPointF wallStartPoint;
+
+    // Mode tracking
+    enum Mode { Normal, DrawingWall, PlacingFurniture };
+    Mode currentMode;
+    QString furnitureToAdd;
+
+
+    // Clipboard for copy-paste
+    QList<QGraphicsItem*> clipboardItems;
+
+    // Command stacks for undo-redo
+    QStack<Command*> undoStack;
+    QStack<Command*> redoStack;
+
 
     void setupUI();
     void createMenus();
 
+    // Event handlers for scene
+    bool eventFilter(QObject *obj, QEvent *event) override;
+    void handleMousePress(QGraphicsSceneMouseEvent *event);
+    void handleMouseMove(QGraphicsSceneMouseEvent *event);
+    void handleMouseRelease(QGraphicsSceneMouseEvent *event);
+
+    // Helper methods
+    void executeCommand(Command* command);
+    QList<QGraphicsItem*> getSelectedItems();
 
 
 private slots:
     void setSmallHouse();
     void setMediumHouse();
     void setLargeHouse();
+
+
+    void addSofa();
+    void addChair();
+    void addTable();
+    void startDrawingWall();
+
+
 
 };
 #endif // MAINWINDOW_H

@@ -33,7 +33,8 @@ void HouseScene::setHouseSize(SizeType sizetype)
     // Draw yellow background under the house area
     QGraphicsRectItem *houseRect = addRect(0, 0, houseSize.width(), houseSize.height(),
                                            QPen(Qt::black), QBrush(QColor("#fff9cc")));
-    houseRect->setZValue(-1);  // Make sure it's behind other items
-    // Add a visible border (optional)
+    houseRect->setZValue(-1);
+    // Make sure it's behind other items
+    // Add a visible border
     addRect(sceneRect(), QPen(Qt::black));
 }

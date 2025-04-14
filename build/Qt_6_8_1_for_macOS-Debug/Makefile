@@ -52,13 +52,25 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../../housescene.cpp \
+SOURCES       = ../../addcommand.cpp \
+		../../command.cpp \
+		../../deletecommand.cpp \
+		../../furniture.cpp \
+		../../housescene.cpp \
 		../../main.cpp \
-		../../mainwindow.cpp moc_housescene.cpp \
+		../../mainwindow.cpp \
+		../../movecommand.cpp \
+		../../wall.cpp moc_housescene.cpp \
 		moc_mainwindow.cpp
-OBJECTS       = housescene.o \
+OBJECTS       = addcommand.o \
+		command.o \
+		deletecommand.o \
+		furniture.o \
+		housescene.o \
 		main.o \
 		mainwindow.o \
+		movecommand.o \
+		wall.o \
 		moc_housescene.o \
 		moc_mainwindow.o
 DIST          = /Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_pre.prf \
@@ -275,6 +287,7 @@ DIST          = /Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_pre.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/qt_config.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_post.prf \
+		../../.qmake.stash \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/mac/sdk.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/toolchain.prf \
@@ -304,10 +317,22 @@ DIST          = /Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_pre.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/exceptions.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/yacc.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/lex.prf \
-		../../../../HouseLayoutDesigner.pro ../../housescene.h \
-		../../mainwindow.h ../../housescene.cpp \
+		../../../../HouseLayoutDesigner.pro ../../addcommand.h \
+		../../command.h \
+		../../deletecommand.h \
+		../../furniture.h \
+		../../housescene.h \
+		../../mainwindow.h \
+		../../movecommand.h \
+		../../wall.h ../../addcommand.cpp \
+		../../command.cpp \
+		../../deletecommand.cpp \
+		../../furniture.cpp \
+		../../housescene.cpp \
 		../../main.cpp \
-		../../mainwindow.cpp
+		../../mainwindow.cpp \
+		../../movecommand.cpp \
+		../../wall.cpp
 QMAKE_TARGET  = HouseLayoutDesigner
 DESTDIR       = 
 TARGET        = HouseLayoutDesigner.app/Contents/MacOS/HouseLayoutDesigner
@@ -316,7 +341,7 @@ TARGET        = HouseLayoutDesigner.app/Contents/MacOS/HouseLayoutDesigner
 EXPORT_QMAKE_MAC_SDK = macosx
 EXPORT_QMAKE_MAC_SDK_VERSION = 15.2
 EXPORT_QMAKE_XCODE_DEVELOPER_PATH = /Applications/Xcode.app/Contents/Developer
-EXPORT__QMAKE_STASH_ = 
+EXPORT__QMAKE_STASH_ = /Users/jielu/Desktop/TAMK/graphical user interface/HouseLayoutDesigner/build/Qt_6_8_1_for_macOS-Debug/.qmake.stash
 EXPORT_VALID_ARCHS = x86_64 arm64
 EXPORT_DEFAULT_ARCHS = arm64
 EXPORT_ARCHS = $(filter $(EXPORT_VALID_ARCHS), $(if $(ARCHS), $(ARCHS), $(if $(EXPORT_DEFAULT_ARCHS), $(EXPORT_DEFAULT_ARCHS), $(EXPORT_VALID_ARCHS))))
@@ -546,6 +571,7 @@ Makefile: ../../HouseLayoutDesigner.pro /Users/jielu/Qt/6.8.1/macos/mkspecs/macx
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/qt_config.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/mac/sdk.prf \
 		/Users/jielu/Qt/6.8.1/macos/mkspecs/features/toolchain.prf \
@@ -794,6 +820,7 @@ Makefile: ../../HouseLayoutDesigner.pro /Users/jielu/Qt/6.8.1/macos/mkspecs/macx
 /Users/jielu/Qt/6.8.1/macos/mkspecs/features/qt_config.prf:
 /Users/jielu/Qt/6.8.1/macos/mkspecs/macx-clang/qmake.conf:
 /Users/jielu/Qt/6.8.1/macos/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Users/jielu/Qt/6.8.1/macos/mkspecs/features/exclusive_builds.prf:
 /Users/jielu/Qt/6.8.1/macos/mkspecs/features/mac/sdk.prf:
 /Users/jielu/Qt/6.8.1/macos/mkspecs/features/toolchain.prf:
@@ -851,8 +878,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../../housescene.h ../../mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../housescene.cpp ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../addcommand.h ../../command.h ../../deletecommand.h ../../furniture.h ../../housescene.h ../../mainwindow.h ../../movecommand.h ../../wall.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../addcommand.cpp ../../command.cpp ../../deletecommand.cpp ../../furniture.cpp ../../housescene.cpp ../../main.cpp ../../mainwindow.cpp ../../movecommand.cpp ../../wall.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../mainwindow.ui $(DISTDIR)/
 
 
@@ -863,6 +890,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r HouseLayoutDesigner.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -889,6 +917,8 @@ moc_housescene.cpp: ../../housescene.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsRectItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
 		/Users/jielu/Qt/6.8.1/macos/libexec/moc
 	/Users/jielu/Qt/6.8.1/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=16 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/jielu/Qt/6.8.1/macos/mkspecs/macx-clang -I'/Users/jielu/Desktop/TAMK/graphical user interface/HouseLayoutDesigner' -I/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers -I/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers -I/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/Users/jielu/Qt/6.8.1/macos/lib ../../housescene.h -o moc_housescene.cpp
 
@@ -897,6 +927,42 @@ moc_mainwindow.cpp: ../../mainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMessageBox \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/QStack \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/qstack.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenu \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenu.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QAction \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qaction.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenuBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenubar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QToolBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QFileDialog \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../../housescene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsRectItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		../../wall.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qpainter.h \
+		../../furniture.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyleOptionGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyleoption.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyle \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyle.h \
+		../../movecommand.h \
+		../../command.h \
+		../../addcommand.h \
+		../../deletecommand.h \
 		/Users/jielu/Qt/6.8.1/macos/libexec/moc
 	/Users/jielu/Qt/6.8.1/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=16 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/jielu/Qt/6.8.1/macos/mkspecs/macx-clang -I'/Users/jielu/Desktop/TAMK/graphical user interface/HouseLayoutDesigner' -I/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers -I/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers -I/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/Users/jielu/Qt/6.8.1/macos/lib ../../mainwindow.h -o moc_mainwindow.cpp
 
@@ -923,11 +989,56 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 
 ####### Compile
 
+addcommand.o: ../../addcommand.cpp ../../addcommand.h \
+		../../command.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o addcommand.o ../../addcommand.cpp
+
+command.o: ../../command.cpp ../../command.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o command.o ../../command.cpp
+
+deletecommand.o: ../../deletecommand.cpp ../../deletecommand.h \
+		../../command.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o deletecommand.o ../../deletecommand.cpp
+
+furniture.o: ../../furniture.cpp ../../furniture.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenu \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenu.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyleOptionGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyleoption.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qpainter.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyle \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyle.h \
+		../../wall.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QBrush \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qbrush.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o furniture.o ../../furniture.cpp
+
 housescene.o: ../../housescene.cpp ../../housescene.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
-		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsRectItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o housescene.o ../../housescene.cpp
 
 main.o: ../../main.cpp ../../mainwindow.h \
@@ -935,6 +1046,42 @@ main.o: ../../main.cpp ../../mainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMessageBox \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/QStack \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/qstack.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenu \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenu.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QAction \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qaction.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenuBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenubar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QToolBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QFileDialog \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../../housescene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsRectItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		../../wall.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qpainter.h \
+		../../furniture.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyleOptionGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyleoption.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyle \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyle.h \
+		../../movecommand.h \
+		../../command.h \
+		../../addcommand.h \
+		../../deletecommand.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QApplication \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
@@ -944,8 +1091,65 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
 		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h \
-		ui_mainwindow.h
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMessageBox \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/QStack \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtCore.framework/Headers/qstack.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenu \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenu.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QAction \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qaction.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QMenuBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qmenubar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QToolBar \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QFileDialog \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../../housescene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsRectItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		../../wall.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qpainter.h \
+		../../furniture.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyleOptionGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyleoption.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QStyle \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qstyle.h \
+		../../movecommand.h \
+		../../command.h \
+		../../addcommand.h \
+		../../deletecommand.h \
+		ui_mainwindow.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QVBoxLayout \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qboxlayout.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QWidget \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGroupBox \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgroupbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../../mainwindow.cpp
+
+movecommand.o: ../../movecommand.cpp ../../movecommand.h \
+		../../command.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o movecommand.o ../../movecommand.cpp
+
+wall.o: ../../wall.cpp ../../wall.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/jielu/Qt/6.8.1/macos/lib/QtGui.framework/Headers/qpainter.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o wall.o ../../wall.cpp
 
 moc_housescene.o: moc_housescene.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_housescene.o moc_housescene.cpp
