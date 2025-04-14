@@ -37,6 +37,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+
 // Add method to show undo view
 void MainWindow::showUndoView()
 {

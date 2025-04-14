@@ -3,6 +3,8 @@
 #include <QUndoStack>
 #include "movecommand.h"
 #include <QDateTime>
+#include "mainwindow.h"
+#include <QTimer>
 
 Furniture::Furniture(int w, int h, FurnitureType type)
     : width(w), height(h), furnitureType(type)
@@ -228,14 +230,15 @@ void Furniture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         lastProcessedScene = scene();
         lastProcessedTime = currentTime;
     }
+
+
 }
 
 void Furniture::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     // Create context menu for rotation
     QMenu menu;
-    QAction *rotateAction = menu.addAction("Rotate 90° Clockwise");
-
+    QAction *rotateAction = menu.addAction("Rotate");
     QAction *selectedAction = menu.exec(event->screenPos());
 
     if (selectedAction == rotateAction) {

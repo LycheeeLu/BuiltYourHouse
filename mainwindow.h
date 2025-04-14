@@ -91,6 +91,9 @@ private:
     QList<QGraphicsItem*> getSelectedItems();
 
 
+
+
+
 private slots:
     void setSmallHouse();
     void setMediumHouse();
@@ -111,6 +114,7 @@ private slots:
     void select();
 
     void showUndoView();
+
 
 
 };
